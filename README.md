@@ -29,13 +29,6 @@ Download the following models:
 | GFPGANv1.4.pth | https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth |
 | inswapper_128_fp16.onnx | https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx?download=true |
 
-- GFPGANv1.4.pth
-- https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth
-
-
-- inswapper_128_fp16.onnx
-- https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx?download=true
-
 Move both files into the `models` folder.
 
 ---
