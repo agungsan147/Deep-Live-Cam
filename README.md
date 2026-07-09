@@ -25,7 +25,10 @@ cd Deep-Live-Cam
 Download the following models:
 
 - GFPGANv1.4.onnx
+https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx?download=true
+ 
 - inswapper_128_fp16.onnx
+https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth
 
 Move both files into the `models` folder.
 
