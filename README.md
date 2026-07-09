@@ -67,8 +67,6 @@ After installation, run:
 pip install -r requirements.txt
 ```
 
-again.
-
 ---
 
 # GPU Acceleration (NVIDIA CUDA)
