@@ -96,221 +96,190 @@ Users are expected to use this software responsibly and legally. If using a real
   <video src="https://github.com/user-attachments/assets/2e9b9b82-fa04-4b70-9f56-b1f68e7672d0" width="450" controls></video>
 </p>
 
-## Installation (Manual)
+## Installation (Windows)
 
-**Please be aware that the installation requires technical skills and is not for beginners. Consider downloading the quickstart version.**
+> **Requirements**
+>
+> - Windows 10/11 (64-bit)
+> - Python 3.11
+> - Git
+> - FFmpeg
+> - Microsoft Visual Studio 2022 Build Tools (Desktop development with C++)
+> - NVIDIA GPU (Optional, recommended)
 
-<details>
-<summary>Click to see the process</summary>
+---
 
-### Installation
-
-This is more likely to work on your computer but will be slower as it utilizes the CPU.
-
-**1. Set up Your Platform**
-
--   Python (3.11 recommended)
--   pip
--   git
--   [ffmpeg](https://www.youtube.com/watch?v=OlNWCpFdVMA) - ```iex (irm ffmpeg.tc.ht)```
--   [Visual Studio 2022 Runtimes (Windows)](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-
-**2. Clone the Repository**
+### 1. Clone Repository
 
 ```bash
 git clone --depth 1 https://github.com/hacksider/Deep-Live-Cam.git
 cd Deep-Live-Cam
 ```
 
-**3. Download the Models**
+---
 
-1. [GFPGANv1.4](https://huggingface.co/hacksider/deep-live-cam/resolve/main/GFPGANv1.4.onnx)
-2. [inswapper\_128\_fp16.onnx](https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx)
+### 2. Download Models
 
-Place these files in the "**models**" folder.
+Download the following models:
 
-**4. Install Dependencies**
+- GFPGANv1.4.onnx
+- inswapper_128_fp16.onnx
 
-We highly recommend using a `venv` to avoid issues.
+Move both files into the `models` folder.
 
+---
 
-For Windows:
+### 3. Create Virtual Environment
+
 ```bash
 python -m venv venv
+```
+
+Activate it:
+
+```bash
 venv\Scripts\activate
-pip install -r requirements.txt
-```
-For Linux:
-```bash
-# Ensure you use the installed Python 3.11
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
 ```
 
-**For macOS:**
+---
 
-Apple Silicon (M1/M2/M3) requires specific setup:
+### 4. Install Python Dependencies
 
 ```bash
-# Install Python 3.11 (specific version is important)
-brew install python@3.11
-
-# Install tkinter package (required for the GUI)
-brew install python-tk@3.11
-
-# Create and activate virtual environment with Python 3.11
-python3.11 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-** In case something goes wrong and you need to reinstall the virtual environment **
+> **If `insightface` fails to install**
+>
+> Install **Microsoft Visual Studio 2022 Build Tools** and enable:
+>
+> - Desktop development with C++
+> - MSVC v143 Build Tools
+> - Windows 10/11 SDK
+
+After installation, run:
 
 ```bash
-# Deactivate the virtual environment
-rm -rf venv
-
-# Reinstall the virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# install the dependencies again
 pip install -r requirements.txt
-
-# gfpgan and basicsrs issue fix
-pip install git+https://github.com/xinntao/BasicSR.git@master
-pip uninstall gfpgan -y
-pip install git+https://github.com/TencentARC/GFPGAN.git@master
 ```
 
-**Run:** If you don't have a GPU, you can run Deep-Live-Cam using `python run.py`. Note that initial execution will download models (~300MB).
+again.
 
-### GPU Acceleration
+---
 
-**CUDA Execution Provider (Nvidia)**
+# GPU Acceleration (NVIDIA CUDA)
 
-1. Install [CUDA Toolkit 12.8.0](https://developer.nvidia.com/cuda-12-8-0-download-archive)
-2. Install [cuDNN v8.9.7 for CUDA 12.x](https://developer.nvidia.com/rdp/cudnn-archive) (required for onnxruntime-gpu):
-   - Download cuDNN v8.9.7 for CUDA 12.x
-   - Make sure the cuDNN bin directory is in your system PATH
-3. Install dependencies:
+### 1. Install CUDA Toolkit 12.8
+
+Download and install:
+
+https://developer.nvidia.com/cuda-12-8-0-download-archive
+
+Restart Windows after installation.
+
+Verify:
+
+```bash
+nvcc --version
+```
+
+---
+
+### 2. Install PyTorch (CUDA 12.8)
 
 ```bash
 pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+```
+
+---
+
+### 3. Install ONNX Runtime GPU
+
+```bash
 pip uninstall onnxruntime onnxruntime-gpu
 pip install onnxruntime-gpu==1.21.0
 ```
 
-3. Usage:
+---
+
+### 4. Verify CUDA
+
+```bash
+python -c "import onnxruntime as ort; print(ort.get_available_providers())"
+```
+
+Expected output:
+
+```text
+['TensorrtExecutionProvider',
+ 'CUDAExecutionProvider',
+ 'CPUExecutionProvider']
+```
+
+---
+
+### 5. Run
 
 ```bash
 python run.py --execution-provider cuda
 ```
 
-**CoreML Execution Provider (Apple Silicon)**
+If everything is configured correctly, the console should display:
 
-Apple Silicon (M1/M2/M3) specific installation:
-
-1. Make sure you've completed the macOS setup above using Python 3.11.
-2. Install dependencies:
-
-```bash
-pip uninstall onnxruntime onnxruntime-silicon
-pip install onnxruntime-silicon==1.13.1
+```text
+Applied providers: ['CUDAExecutionProvider']
 ```
 
-3. Usage:
+---
+
+## CPU Mode
+
+Run normally:
 
 ```bash
-python3.11 run.py --execution-provider coreml
+python run.py
 ```
 
-**Important Notes for macOS:**
-- You **must** use Python 3.11, not newer versions like 3.13
-- Always run with `python3.11` command not just `python` if you have multiple Python versions installed
-- If you get error about `_tkinter` missing, reinstall the tkinter package: `brew reinstall python-tk@3.11`
-- If you get model loading errors, check that your models are in the correct folder
-- If you encounter conflicts with other Python versions, consider uninstalling them:
-  ```bash
-  # List all installed Python versions
-  brew list | grep python
-
-  # Uninstall conflicting versions if needed
-  brew uninstall --ignore-dependencies python@3.13
-
-  # Keep only Python 3.11
-  brew cleanup
-  ```
-
-**CoreML Execution Provider (Apple Legacy)**
-
-1. Install dependencies:
-
-```bash
-pip uninstall onnxruntime onnxruntime-coreml
-pip install onnxruntime-coreml==1.21.0
-```
-
-2. Usage:
-
-```bash
-python run.py --execution-provider coreml
-```
-
-**DirectML Execution Provider (Windows)**
-
-1. Install dependencies:
-
-```bash
-pip uninstall onnxruntime onnxruntime-directml
-pip install onnxruntime-directml==1.21.0
-```
-
-2. Usage:
-
-```bash
-python run.py --execution-provider directml
-```
-
-**OpenVINO™ Execution Provider (Intel)**
-
-1. Install dependencies:
-
-```bash
-pip uninstall onnxruntime onnxruntime-openvino
-pip install onnxruntime-openvino==1.21.0
-```
-
-2. Usage:
-
-```bash
-python run.py --execution-provider openvino
-```
-</details>
+---
 
 ## Usage
 
-**1. Image/Video Mode**
+### Image / Video
 
--   Execute `python run.py`.
--   Choose a source face image and a target image/video.
--   Click "Start".
--   The output will be saved in a directory named after the target video.
+1. Launch:
 
-**2. Webcam Mode**
+```bash
+python run.py
+```
 
--   Execute `python run.py`.
--   Select a source face image.
--   Click "Live".
--   Wait for the preview to appear (10-30 seconds).
--   Use a screen capture tool like OBS to stream.
--   To change the face, select a new source image.
+2. Select a source face.
 
-## Download all models in this huggingface link
-- [**Download models here**](https://huggingface.co/hacksider/deep-live-cam/tree/main)
+3. Select a target image or video.
+
+4. Click **Start**.
+
+The processed file will be saved automatically.
+
+---
+
+### Webcam
+
+Launch:
+
+```bash
+python run.py --execution-provider cuda
+```
+
+1. Select a source face.
+2. Click **Live**.
+3. Wait until the webcam preview appears.
+4. Use OBS or other capture software if you want to stream.
+
+---
+
+## Download All Models
+
+https://huggingface.co/hacksider/deep-live-cam/tree/main
 
 ## Command Line Arguments (Unmaintained)
 
